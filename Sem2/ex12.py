@@ -1,5 +1,6 @@
 import turtle as tr
 tr.shape('turtle')
+tr.speed(0)
 tr.left(90)
 while True:
     for i in range(1, 181):
