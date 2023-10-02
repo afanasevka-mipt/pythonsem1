@@ -5,4 +5,3 @@ tr.color('red')
 while True:
     tr.forward(randint(5, 50))
     tr.left(randint(1, 181))
-tr.done()
