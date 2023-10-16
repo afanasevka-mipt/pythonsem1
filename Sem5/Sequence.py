@@ -44,6 +44,3 @@ class RNA(Sequence):
         self.string_tr_RNA = self.string.replace('U', 'T')
         return self.string_tr_RNA
 
-s = DNA('ATGC')
-s.hamming_distance('AAGC')
-print(s.h_d)
