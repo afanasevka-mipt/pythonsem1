@@ -43,4 +43,12 @@ class RNA(Sequence):
     def transcribe_RNA(self) -> str:
         self.string_tr_RNA = self.string.replace('U', 'T')
         return self.string_tr_RNA
+    
+    def count_nucleotides_RNA(self) -> dict:
+        c_a = self.string.count('A')
+        c_u = self.string.count('U')
+        c_g = self.string.count('G')
+        c_c = self.string.count('C')
+        self.count_RNA = {'A': c_a, 'U': c_u, 'G': c_g, 'C': c_c}
+        return self.count_RNA
 
