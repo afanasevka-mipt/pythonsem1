@@ -25,7 +25,7 @@ class DNA(Sequence):
         self.count_DNA = {'A': c_a, 'T': c_t, 'G': c_g, 'C': c_c}
         return self.count_DNA
     
-    def transcribe_DNA(self) -> str:
+    def transcribe(self) -> str:
         self.string_tr_DNA = self.string.replace('T', 'U')
         return self.string_tr_DNA
     
@@ -40,7 +40,7 @@ class DNA(Sequence):
         return self.string_cm
 
 class RNA(Sequence):
-    def transcribe_RNA(self) -> str:
+    def transcribe(self) -> str:
         self.string_tr_RNA = self.string.replace('U', 'T')
         return self.string_tr_RNA
     
