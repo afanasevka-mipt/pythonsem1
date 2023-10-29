@@ -1,13 +1,13 @@
 import json
 
 
-with open('C:\\Users\\Kirill\\sems\\Sem6\\rna_codon_table.json') as f:
+with open('rna_codon_table.json') as f:
     #######################################################################
     # TODO:                                                               #
     # Use json.load function to load contents of json file to a dict      #
     #######################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-    json.load(f)
+    r_c_t = json.load(f)
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
 
@@ -31,7 +31,9 @@ class Sequence(object):
     # _rna_nucls (a set of all nucleotides in a RNA)                      #
     #######################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
+    _prot_acids = set(r_c_t.values())
+    _dna_nucls = set(['A', 'T', 'G', 'C'])
+    _rna_nucls = set(['A', 'U', 'G', 'C'])
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
     def __init__(self, file_name: str) -> None:
@@ -51,7 +53,8 @@ class Sequence(object):
         # to sequence_type, else raise Error                                  #
         #######################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
+        self.file_name = file_name
+        self.seq_type, self.seq = self._parse(file_name)
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         
     def _parse(self, file_name: str) -> tuple[str, str]:
@@ -70,7 +73,16 @@ class Sequence(object):
         # sequence                                                            #
         #######################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
+        with open(self.file_name, 'r') as fl:
+            lns = fl.readlines()
+            seq = ''
+            seq_type = ''
+            for i, ln in enumerate(lns):
+                ln = ln.strip()
+                if '>' in ln:
+                    seq_type = ln.split()[1]
+                    seq = lns[i+1].strip()
+                    break
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     
     def _check(self, string: str) -> bool:
@@ -88,10 +100,25 @@ class Sequence(object):
         # return True, else return False                                      #
         #######################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
+        if self.seq_type not in self.types:
+            return False
+        if self.seq_type == 'Protein':
+            for i in self.seq:
+                if i not in self._prot_acids:
+                    return False
+        if self.seq_type == 'DNA':
+            for i in self.seq:
+                if i not in self._dna_nucls:
+                    return False
+        if self.seq_type == 'RNA':
+            for i in self.seq:
+                if i not in self._rna_nucls:
+                    return False
+        else:
+            return True
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     
-    def hamming_distance(self, sequence: str) -> int:
+    def hamming_distance(self, seq, str2: str) -> int:
         """
         Input:
         - sequence : another sequence of nucleotides
@@ -107,7 +134,15 @@ class Sequence(object):
         # and count different letters.                                        #
         #######################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        
+        c = 0
+        if len(self.seq) != len(str2):
+            raise ValueError('string lengths are not the same')
+        else:
+            for i in range(min(len(self.seq), len(str2))):
+                if self.seq[i] != str2[i]:
+                    c += 1
+        self.h_d = c
+        return self.h_d
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     
     def count_nucleotides(self) -> None:
@@ -122,14 +157,14 @@ class Sequence(object):
         # of DNA, RNA or Protein classes                                      #
         #######################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        
+        raise NameError
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     
     def to_protein(self) -> None:
         """
         Input: None
 
-        Output: None
+        Output: Non
         """
         #######################################################################
         # TODO:                                                               #
@@ -137,7 +172,7 @@ class Sequence(object):
         # of DNA, RNA or Protein classes                                      #
         #######################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        
+        raise NameError
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     
     def transcribe(self) -> None:
@@ -152,7 +187,7 @@ class Sequence(object):
         # of DNA or RNA classes                                               #
         #######################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        
+        raise NameError
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
 class DNA(Sequence):
@@ -172,7 +207,12 @@ class DNA(Sequence):
         # looping over sequence_attribute or using a standard string method.  #
         #######################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        
+        c_a = self.seq.count('A')
+        c_t = self.seq.count('T')
+        c_g = self.seq.count('G')
+        c_c = self.seq.count('C')
+        self.count_DNA = {'A': c_a, 'T': c_t, 'G': c_g, 'C': c_c}
+        return self.count_DNA
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     
     def complement_dna(self) -> str:
@@ -189,7 +229,14 @@ class DNA(Sequence):
         # to the empty string.                                                #
         #######################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        
+        self.seq_cm = self.seq
+        self.seq_cm = self.seq_cm.replace('A', '1')
+        self.seq_cm = self.seq_cm.replace('T', 'A')
+        self.seq_cm = self.seq_cm.replace('1', 'T')
+        self.seq_cm = self.seq_cm.replace('G', '2')
+        self.seq_cm = self.seq_cm.replace('C', 'G')
+        self.seq_cm = self.seq_cm.replace('2', 'C')
+        return self.seq_cm
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     
     def transcribe(self) -> str:
@@ -205,7 +252,8 @@ class DNA(Sequence):
         # to the empty string.                                                #
         #######################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        
+        self.seq_tr = self.seq.replace('T', 'U')
+        return self.seq_tr
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     
     def to_protein(self) -> str:
@@ -224,7 +272,20 @@ class DNA(Sequence):
         # If start codon was not found - raise Error                          #
         #######################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        
+        self.seq_tr = self.seq.replace('T', 'U')
+        if 'AUG' not in self.seq_tr:
+            raise ValueError('Start codon is not defind')
+        codons = []
+        k = self.seq_tr.index('AUG')
+        for i in range(k+3, len(self.seq_tr), 3):
+            codon = self.seq_tr[i:i+3]
+            codons.append(r_c_t[codon])
+            if codon in ['UAA', 'UAG', 'UGA']:
+                break
+        if 'Stop' in codons:
+            codons.remove('Stop')
+        self.codons = codons
+        return self.codons
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     
     def restriction_slices(self) -> int:
@@ -239,7 +300,12 @@ class DNA(Sequence):
         # resulting number of slices                                          #
         #######################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        
+        c = 0
+        for i in range(0, (len(self.seq - 5))):
+            if self.seq[i:i+6] == 'GAATTC' or self.seq[i:i+6] == 'CTTAAG':
+                c += 1
+        self.r_s = c
+        return self.r_s
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
 class RNA(Sequence):
@@ -259,7 +325,12 @@ class RNA(Sequence):
         # looping over sequence_attribute or using a standard string method.  #
         #######################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        
+        c_a = self.seq.count('A')
+        c_u = self.seq.count('U')
+        c_g = self.seq.count('G')
+        c_c = self.seq.count('C')
+        self.count = {'A': c_a, 'U': c_u, 'G': c_g, 'C': c_c}
+        return self.count
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     
     def transcribe(self) -> str:
@@ -275,7 +346,8 @@ class RNA(Sequence):
         # to the empty string.                                                #
         #######################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        
+        self.seq_tr = self.seq.replace('U', 'T')
+        return self.seq_tr
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     
     def to_protein(self) -> str:
@@ -293,7 +365,19 @@ class RNA(Sequence):
         # If start codon was not found - raise Error                          #
         #######################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        
+        if 'AUG' not in self.seq_tr:
+            raise ValueError('Start codon is not defind')
+        codons = []
+        k = self.seq_tr.index('AUG')
+        for i in range(k+3, len(self.seq_tr), 3):
+            codon = self.seq_tr[i:i+3]
+            codons.append(r_c_t[codon])
+            if codon in ['UAA', 'UAG', 'UGA']:
+                break
+        if 'Stop' in codons:
+            codons.remove('Stop')
+        self.codons = codons
+        return self.codons
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
 class Protein(Sequence):
@@ -304,7 +388,8 @@ class Protein(Sequence):
     # amino acids: _pos_acids and _neg_acids                              #
     #######################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
+    _pos_acids = set(['K', 'R', 'H'])
+    _neg_acids = set(['D', 'E'])
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     def count_amino_acids(self) -> dict:
         """
@@ -322,7 +407,29 @@ class Protein(Sequence):
         # looping over sequenceattribute or using a standard string method.   #
         #######################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        
+        c_A=self.seq.count('A')
+        c_R=self.seq.count('R')
+        c_N=self.seq.count('N')
+        c_D=self.seq.count('D')
+        c_C=self.seq.count('C')
+        c_Q=self.seq.count('Q')
+        c_E=self.seq.count('E')
+        c_G=self.seq.count('G')
+        c_H=self.seq.count('H')
+        c_I=self.seq.count('I')
+        c_L=self.seq.count('L')
+        c_K=self.seq.count('K')
+        c_M=self.seq.count('M')
+        c_F=self.seq.count('F')
+        c_P=self.seq.count('P')
+        c_S=self.seq.count('S')
+        c_T=self.seq.count('T')
+        c_W=self.seq.count('W')
+        c_Y=self.seq.count('Y')
+        c_V=self.seq.count('V')
+        self.count = {'A': c_A, 'R': c_R, 'N': c_N, 'D': c_D, 'C': c_C, 'Q': c_Q, 'E': c_E, 'G': c_G, 'H': c_H, 'I': c_I,
+                      'L': c_L, 'K': c_K, 'M': c_M, 'F': c_F, 'P': c_P, 'S': c_S, 'T': c_T, 'W': c_W, 'Y': c_Y, 'V': c_V}
+        return self.count
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     
     def to_protein(self) -> str:
@@ -338,7 +445,7 @@ class Protein(Sequence):
         # Returning sequence_attribute is enough                              #
         #######################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        
+        return self.seq
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     
     def charge(self) -> int:
@@ -355,7 +462,14 @@ class Protein(Sequence):
         # _neg_acids decreases by 1, else does not changes                    #
         #######################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        
+        crg = 0
+        for i in self.seq:
+            if i in self._pos_acids:
+                crg += 1
+            if i in self._neg_acids:
+                crg+= 1
+        self.chrg = crg
+        return self.chrg
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         # _neg_acids. If in _pos_acids then charge increases by 1, if in      #
 print(f)
