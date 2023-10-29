@@ -1,5 +1,5 @@
 import sys
-from seq2protein import DNA, RNA
+from seq2protein import DNA, RNA, Sequence, Protein
 
 '''
 Run main.py from command line using
